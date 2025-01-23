@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "import-name": false,
+        "semicolon": [false],
+        "max-line-length": false
+    }
+}

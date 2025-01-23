@@ -1,0 +1,33 @@
+{
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
+    },
+    "compilerOptions": {
+        "module": "commonjs",
+        "lib": ["es2015", "es5", "es6", "dom"],
+        "esModuleInterop": true,
+        "target": "es6",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": false,
+        "outDir": "build",
+        "baseUrl": ".",
+        "rootDir": "src",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "paths": {
+            "*": ["node_modules/*"],
+            "@/*": ["src/*"]
+        },
+        // knex.js
+        "typeRoots": ["./nodemodules/@types", "./src/@types"]
+    },
+    "include": ["src/**/*"],
+    "exclude": [],
+    "tsc-alias": {
+        "resolveFullPaths": true,
+        "verbose": false
+    },
+}
