@@ -1,5 +1,5 @@
 import { DB, db } from '@/db/kysely';
-import { DeleteResult } from 'kysely/dist/cjs';
+import { DeleteResult } from 'kysely';
 import { IBaseRepository } from './interfaces/base-repository.interface';
 
 interface IBaseOption<T> {
@@ -50,27 +50,34 @@ export class BaseRepository<T> implements IBaseRepository<T> {
         return results as T[];
     }
 
-    async upsert(data: Partial<T | T[]>): Promise<T | T[]> {
-        const qb = db.insertInto(this.tableName).values(data);
-        if (Array.isArray(data)) {
-            qb.onConflict((oc) =>
-                oc.column('id').doUpdateSet((eb) => {
-                    const keys = Object.keys(data[0]) as (keyof T)[];
-                    return Object.fromEntries(keys.map((key) => [key, eb.ref(key as any)]));
-                }),
-            );
+    // TODO: implement upsert
+    async upsert<D extends Partial<T> | Array<Partial<T>>>(data: D): Promise<D extends  Array<Partial<T>> ? T[] : T | null> {
+        throw new Error("Method not implement")
+        // console.log("🚀 ~ BaseRepository<T> ~ upsert ~ data:", data)
+        // if (Array.isArray(data)) {
+           
 
-            return qb.execute() as unknown as T[];
-        }
+        //     const qb =  db.insertInto(this.tableName).values(data).onDuplicateKeyUpdate((eb) => {
+        //         const keys = Object.keys(data[0]).filter(key => key !== 'id');
+        //         const tmp =  Object.fromEntries(keys.map((key) => [key,  sql`values(${eb.ref(key as any)})`,]));
+        //         console.log("🚀 ~ BaseRepository<T> ~ qb ~ tmp:", tmp)
 
-        qb.onConflict((oc) =>
-            oc.column('id').doUpdateSet((eb) => {
-                const keys = Object.keys(data) as (keyof T)[];
-                return Object.fromEntries(keys.map((key) => [key, eb.ref(key as any)]));
-            }),
-        );
+        //         return tmp
+        //     })
 
-        return qb.executeTakeFirst() as unknown as T;
+
+        //     const result = await qb.execute();
+        //     console.log(result);
+            
+        // }
+
+        // return null
+
+        // const qb = db.insertInto(this.tableName).values(data).onDuplicateKeyUpdate(data)
+
+
+        // return qb.executeTakeFirst() as unknown as T;
+
     }
 
     async update(id: string, data: Partial<T>): Promise<T> {

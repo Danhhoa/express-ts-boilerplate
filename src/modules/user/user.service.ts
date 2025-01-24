@@ -1,6 +1,6 @@
+import { v4 as uuidV4 } from 'uuid';
 import { User } from './user.entity';
 import userRepository from './user.repository';
-import { v4 as uuidV4 } from 'uuid';
 
 class UserService {
     async getAllUsers() {
@@ -8,6 +8,13 @@ class UserService {
 
         return users;
     }
+
+    async getUserByEmail(email: string) {
+        const user = await userRepository.findByEmail(email)
+
+        return user
+    }
+
 
     async createUser(data: Partial<User>) {
         const id = uuidV4();
@@ -21,13 +28,7 @@ class UserService {
         return users;
     }
 
-    async upsertUser(data: Partial<User>) {
-        const user = await userRepository.upsert(data);
-
-        return user;
-    }
-
-    async update(id: string, data: Partial<User>) {
+    async updateUser(id: string, data: Partial<User>) {
         const userUpdated = await userRepository.update(id, data);
 
         return userUpdated;

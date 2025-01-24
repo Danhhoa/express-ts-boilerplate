@@ -1,10 +1,8 @@
-import { IFindAndCountResponse } from '@/shared/interfaces/typeorm.interface';
 
-import { IBaseService } from './interfaces';
-import { DB, db } from '@/db/kysely';
 import dbClient from '@/db/knex';
+import { DB, db } from '@/db/kysely';
 import { Knex } from 'knex/types';
-import { CamelCasePlugin, ExpressionBuilder, SelectQueryBuilder, sql } from 'kysely';
+import { sql } from 'kysely';
 import { snakeToCamel } from '../utilities/converter';
 
 interface IBaseOption<T> {

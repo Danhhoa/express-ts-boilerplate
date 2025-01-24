@@ -10,6 +10,10 @@ class UserController extends BaseController<typeof userService> {
         return this.service.getAllUsers();
     }
 
+    async getUserByEmail(email: string) {
+        return this.service.getUserByEmail(email);
+    }
+
     async createUser(data: Partial<User>) {
         return this.service.createUser(data);
     }
@@ -18,8 +22,8 @@ class UserController extends BaseController<typeof userService> {
         return this.service.bulkCreateUser(data);
     }
 
-    async upsertUser(data: Partial<User>) {
-        return this.service.upsertUser(data);
+    async updateUser(id: string, data: Partial<User>) {
+        return this.service.updateUser(id, data);
     }
 }
 

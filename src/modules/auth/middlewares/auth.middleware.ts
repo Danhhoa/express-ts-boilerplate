@@ -3,18 +3,9 @@ import IRequest from '@/shared/interfaces/request.interface';
 import Encryption from '@/shared/utilities/encryption.utility';
 import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BaseMiddleware } from './base';
+import { BaseMiddleware } from '../../../shared/middlewares/base';
 import userService from '@/modules/user/user.service';
-import { MessageErrorCode } from '../errors/enums';
-
-// export const isAdmin = () => {
-//     return async (req: IRequest, res: Response, next: NextFunction) => {
-//         if (req.user.role !== 'ADMIN') {
-//             return ApiResponse.error(res, httpStatusCodes.UNAUTHORIZED);
-//         }
-//         next();
-//     };
-// };
+import { MessageErrorCode } from '../../../shared/errors/enums';
 
 const HEADERS = 'authorization';
 export class AuthMiddleware extends BaseMiddleware {
@@ -40,11 +31,7 @@ export class AuthMiddleware extends BaseMiddleware {
 
             req.tokenInfo = tokenVerified;
 
-            let user = await userService.repository.findOne({
-                where: {
-                    email: tokenVerified.email,
-                },
-            });
+            let user = await userService.getUserByEmail(tokenVerified.email);
 
             if (!user) {
                 throw new HTTPError({

@@ -1,9 +1,9 @@
 import envConfig from '@/configs/env.config';
-import { MessageErrorCode } from '@/shared/enums';
 import { HTTPError } from '@/shared/errors/http.error';
 import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
+import { MessageErrorCode } from '../errors/enums';
 
 interface IJwtDecoded {
     id: string;

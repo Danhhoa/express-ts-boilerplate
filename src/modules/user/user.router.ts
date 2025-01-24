@@ -11,8 +11,8 @@ class UserRouter extends BaseRouter {
         this.router.get('/', this.route(this.allUsers));
         this.router.post('/', this.route(this.createUser));
         this.router.post('/bulk-create', this.route(this.bulkCreateUser));
-        this.router.post('/upsert', this.route(this.upsertUser));
         this.router.post('/login', this.route(this.login));
+        this.router.put('/:id', this.route(this.updateUser));
     }
 
     async login(req: Request, res: Response) {
@@ -34,6 +34,13 @@ class UserRouter extends BaseRouter {
         } as any);
     }
 
+    async getUserByEmail(req: Request, res: Response) {
+        const result = await userController.getUserByEmail(req.body.email);
+
+        return this.onSuccess(res, result);
+    }
+
+
     async createUser(req: Request, res: Response) {
         const data = req.body;
         const result = await userController.createUser(data);
@@ -48,9 +55,10 @@ class UserRouter extends BaseRouter {
         return this.onSuccess(res, result);
     }
 
-    async upsertUser(req: Request, res: Response) {
+    async updateUser(req: Request, res: Response) {
         const data = req.body;
-        const result = await userController.upsertUser(data);
+        const {id} = req.params
+        const result = await userController.updateUser(id,data);
 
         return this.onSuccess(res, result);
     }
