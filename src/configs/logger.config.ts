@@ -12,10 +12,7 @@ const alignColorsAndTime = winston.format.combine(
     winston.format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    winston.format.printf(
-        (info) =>
-            `${info.label}[${info.timestamp}][${info.level}]: ${info.message}`,
-    ),
+    winston.format.printf((info) => `${info.label}[${info.timestamp}][${info.level}]: ${info.message}`),
 );
 
 addColors({
@@ -41,10 +38,7 @@ const logger = winston.createLogger({
 if (process.env.NODE_ENV !== 'production') {
     logger.add(
         new winston.transports.Console({
-            format: winston.format.combine(
-                winston.format.colorize(),
-                alignColorsAndTime,
-            ),
+            format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
         }),
     );
 }

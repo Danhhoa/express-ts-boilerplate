@@ -9,12 +9,7 @@ import { MessageErrorCode } from '../../../shared/errors/enums';
 
 const HEADERS = 'authorization';
 export class AuthMiddleware extends BaseMiddleware {
-    async use(
-        req: IRequest,
-        res: Response,
-        next: NextFunction,
-        option?: any,
-    ): Promise<void> {
+    async use(req: IRequest, res: Response, next: NextFunction, option?: any): Promise<void> {
         try {
             if (!req.headers[HEADERS]) {
                 throw new HTTPError({
@@ -26,8 +21,7 @@ export class AuthMiddleware extends BaseMiddleware {
             const bearerHeader = req.headers[HEADERS].toString();
             const bearerToken = bearerHeader.split(' ')[1];
 
-            const tokenVerified =
-                await Encryption.verifyToken(bearerToken);
+            const tokenVerified = await Encryption.verifyToken(bearerToken);
 
             req.tokenInfo = tokenVerified;
 

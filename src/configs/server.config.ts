@@ -6,6 +6,8 @@ import * as swaggerUi from 'swagger-ui-express';
 
 import router from '../routes';
 import { swaggerDocument } from './swagger.config';
+import { HTTPError } from '@/shared/errors/http.error';
+import globalErrorHandler from '@/shared/middlewares/global-error-handler.middleware';
 
 const app = express();
 
@@ -14,10 +16,7 @@ app.use((req, res, next) => {
 
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header(
-        'Access-Control-Allow-Methods',
-        'GET,POST,HEAD,OPTIONS,PUT,PATCH,DELETE',
-    );
+    res.header('Access-Control-Allow-Methods', 'GET,POST,HEAD,OPTIONS,PUT,PATCH,DELETE');
     res.header(
         'Access-Control-Allow-Headers',
         'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma, Access-Control-Request-Method, Access-Control-Allow-Headers, Access-Control-Request-Headers',
@@ -42,6 +41,7 @@ app.use(express.json());
 
 app.use(morgan('dev'));
 
+// SWAGGER
 app.use(
     '/api-docs',
     swaggerUi.serve,
@@ -50,17 +50,13 @@ app.use(
     }),
 );
 
-// app.use(authenticate);
-
 // Router
 app.use(router);
-// app.use(constants.APPLICATION.url.basePath, indexRoute);
 
 // Joi Error Handler
 // app.use(joiErrorHandler);
 
-// // Error Handler
-// app.use(notFoundErrorHandler);
-// app.use(errorHandler);
+// Global exception handler
+app.use(globalErrorHandler);
 
 export default app;

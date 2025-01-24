@@ -51,11 +51,12 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     }
 
     // TODO: implement upsert
-    async upsert<D extends Partial<T> | Array<Partial<T>>>(data: D): Promise<D extends  Array<Partial<T>> ? T[] : T | null> {
-        throw new Error("Method not implement")
+    async upsert<D extends Partial<T> | Array<Partial<T>>>(
+        data: D,
+    ): Promise<D extends Array<Partial<T>> ? T[] : T | null> {
+        throw new Error('Method not implement');
         // console.log("🚀 ~ BaseRepository<T> ~ upsert ~ data:", data)
         // if (Array.isArray(data)) {
-           
 
         //     const qb =  db.insertInto(this.tableName).values(data).onDuplicateKeyUpdate((eb) => {
         //         const keys = Object.keys(data[0]).filter(key => key !== 'id');
@@ -65,19 +66,16 @@ export class BaseRepository<T> implements IBaseRepository<T> {
         //         return tmp
         //     })
 
-
         //     const result = await qb.execute();
         //     console.log(result);
-            
+
         // }
 
         // return null
 
         // const qb = db.insertInto(this.tableName).values(data).onDuplicateKeyUpdate(data)
 
-
         // return qb.executeTakeFirst() as unknown as T;
-
     }
 
     async update(id: string, data: Partial<T>): Promise<T> {

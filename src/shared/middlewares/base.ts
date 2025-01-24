@@ -1,5 +1,6 @@
 import { HTTPError } from '@/shared/errors/http.error';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import IRequest from '../interfaces/request.interface';
 
 export class BaseMiddleware {
     onError(res: Response, error?: HTTPError) {
@@ -11,19 +12,14 @@ export class BaseMiddleware {
         });
     }
     run(option?: any) {
-        return (req: Request, res: Response, next: NextFunction) =>
+        return (req: IRequest, res: Response, next: NextFunction) =>
             this.use
                 .bind(this)(req, res, next, option)
                 .catch((error: any) => {
                     this.onError(res, error);
                 });
     }
-    async use(
-        req: Request,
-        res: Response,
-        next: NextFunction,
-        option?: any,
-    ) {
+    use(req: IRequest, res: Response, next: NextFunction, option?: any) {
         next();
     }
 }

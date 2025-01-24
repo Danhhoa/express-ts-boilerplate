@@ -1,4 +1,5 @@
 import { BaseEntity } from '@/shared/base/base.entity';
+import { USER_ROLE } from '@/shared/enums/user.enum';
 
 export class User extends BaseEntity {
     id: string;
@@ -11,5 +12,5 @@ export class User extends BaseEntity {
 
     lastName: string;
 
-    role: string;
+    role: USER_ROLE;
 }

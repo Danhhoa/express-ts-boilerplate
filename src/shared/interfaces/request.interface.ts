@@ -14,6 +14,3 @@ export default interface IRequest extends Request {
         offset: number;
     };
 }
-
-
-

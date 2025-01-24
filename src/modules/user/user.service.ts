@@ -10,11 +10,10 @@ class UserService {
     }
 
     async getUserByEmail(email: string) {
-        const user = await userRepository.findByEmail(email)
+        const user = await userRepository.findByEmail(email);
 
-        return user
+        return user;
     }
-
 
     async createUser(data: Partial<User>) {
         const id = uuidV4();

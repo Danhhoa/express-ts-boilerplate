@@ -2,13 +2,16 @@ import { loginSchema } from '@/modules/auth/validations/auth.schema';
 import { Request, Response, Router } from 'express';
 import { BaseRouter } from '@/shared/base/base.router';
 import userController from './user.controller';
+import { validateSchema } from '@/shared/utilities/validator';
+import { RoleMiddleware } from '@/shared/middlewares/permission-handler.middleware';
+import { USER_ROLE } from '@/shared/enums/user.enum';
 
 class UserRouter extends BaseRouter {
     router: Router;
     constructor() {
         super();
         this.router = Router();
-        this.router.get('/', this.route(this.allUsers));
+        this.router.get('/', new RoleMiddleware([USER_ROLE.ADMIN]).run(), this.route(this.allUsers));
         this.router.post('/', this.route(this.createUser));
         this.router.post('/bulk-create', this.route(this.bulkCreateUser));
         this.router.post('/login', this.route(this.login));
@@ -40,7 +43,6 @@ class UserRouter extends BaseRouter {
         return this.onSuccess(res, result);
     }
 
-
     async createUser(req: Request, res: Response) {
         const data = req.body;
         const result = await userController.createUser(data);
@@ -57,8 +59,8 @@ class UserRouter extends BaseRouter {
 
     async updateUser(req: Request, res: Response) {
         const data = req.body;
-        const {id} = req.params
-        const result = await userController.updateUser(id,data);
+        const { id } = req.params;
+        const result = await userController.updateUser(id, data);
 
         return this.onSuccess(res, result);
     }
