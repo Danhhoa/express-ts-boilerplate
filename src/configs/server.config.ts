@@ -2,12 +2,9 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 
-import * as swaggerUi from 'swagger-ui-express';
-
-import router from '../routes';
-import { swaggerDocument } from './swagger.config';
-import { HTTPError } from '@/shared/errors/http.error';
 import globalErrorHandler from '@/shared/middlewares/global-error-handler.middleware';
+import helmet from 'helmet';
+import router from '../routes';
 
 const app = express();
 
@@ -35,26 +32,51 @@ const corsOption = {
     credentials: true,
 };
 
-app.use(cors(corsOption));
+app.use(cors(corsOption))
+    .use(morgan('dev'))
+    .use(express.urlencoded({ limit: '500mb', extended: false }))
+    .use(express.json({ limit: '500mb' }));
 
-app.use(express.json());
-
-app.use(morgan('dev'));
+app.use(helmet())
+    .use(express.static('public'))
+    .use(helmet.xssFilter())
+    .use(helmet.frameguard({ action: 'deny' }))
+    // maxAge: 7776000000
+    .use(helmet.hsts({ maxAge: 24 * 7 * 60 * 60 * 1000, includeSubDomains: true }))
+    .use(
+        helmet.contentSecurityPolicy({
+            useDefaults: false,
+            directives: {
+                'default-src': ["'self'"],
+                'style-src': ["'self'", "'unsafe-inline'"],
+                'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+                'img-src': ['*', "'self'", 'data: https:'],
+                'connect-src': ["'self'"],
+            },
+        }),
+    )
+    .use(helmet.crossOriginEmbedderPolicy())
+    .use(helmet.crossOriginOpenerPolicy({ policy: process.env.IS_SSL ? 'same-origin' : 'unsafe-none' }))
+    .use(helmet.dnsPrefetchControl())
+    .use(helmet.hidePoweredBy())
+    .use(helmet.ieNoOpen())
+    .use(helmet.noSniff())
+    .use(helmet.originAgentCluster())
+    .use(helmet.permittedCrossDomainPolicies())
+    .use(helmet.referrerPolicy())
+    .use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
 // SWAGGER
-app.use(
-    '/api-docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument, {
-        swaggerOptions: { displayRequestDuration: true },
-    }),
-);
+// app.use(
+//     '/api-docs',
+//     swaggerUi.serve,
+//     swaggerUi.setup(swaggerDocument, {
+//         swaggerOptions: { displayRequestDuration: true },
+//     }),
+// );
 
 // Router
 app.use(router);
-
-// Joi Error Handler
-// app.use(joiErrorHandler);
 
 // Global exception handler
 app.use(globalErrorHandler);
