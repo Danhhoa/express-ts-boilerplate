@@ -32,15 +32,10 @@ const logger = winston.createLogger({
             level: 'error',
         }),
         new winston.transports.File({ filename: 'combined.log' }),
-    ],
-});
-
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(
         new winston.transports.Console({
             format: winston.format.combine(winston.format.colorize(), alignColorsAndTime),
         }),
-    );
-}
+    ],
+});
 
 export default logger;

@@ -20,8 +20,6 @@ export class BaseRouter {
         }
 
         if (error.isJoi) {
-            console.log(error.details[0]);
-
             const errorRes = {
                 code: StatusCodes.BAD_REQUEST,
                 message: error.details && error.details[0].message,

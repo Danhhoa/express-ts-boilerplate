@@ -25,7 +25,6 @@ class QueryMiddleware extends BaseMiddleware {
 
         if (req.query?.fields) {
             let fields = req.query.fields;
-            console.log('🚀 ~ QueryMiddleware ~ use ~ fields:', fields);
 
             // if include * => remove all others
             if (fields.includes('*')) {

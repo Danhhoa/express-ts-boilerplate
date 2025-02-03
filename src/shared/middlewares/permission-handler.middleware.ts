@@ -25,7 +25,6 @@ export class RoleMiddleware extends BaseMiddleware {
 
     use(req: IRequest, res: Response, next: NextFunction) {
         const user = req?.tokenInfo?.user;
-        console.log('🚀 ~ RoleMiddleware ~ use ~ user:', user);
 
         const hasRole = () => {
             return this.rolesPermitted.includes(user.role);
