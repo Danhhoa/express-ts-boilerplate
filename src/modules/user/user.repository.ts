@@ -1,5 +1,5 @@
 import { db } from '@/db/kysely';
-import { User } from '@/modules/user/user.entity';
+import { User } from '@/modules/user/user.model';
 import { BaseRepository } from '@/shared/base/base.repository';
 import { sql } from 'kysely';
 

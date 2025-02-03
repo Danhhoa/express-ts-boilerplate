@@ -1,14 +1,20 @@
+import userService from '@/modules/user/user.service';
+import { MessageErrorCode } from '@/shared/enums';
 import { HTTPError } from '@/shared/errors/http.error';
 import IRequest from '@/shared/interfaces/request.interface';
-import Encryption from '@/shared/utilities/encryption.utility';
 import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BaseMiddleware } from '../../../shared/middlewares/base';
-import userService from '@/modules/user/user.service';
-import { MessageErrorCode } from '../../../shared/errors/enums';
+import { BaseMiddleware } from './base';
+import { verifyToken } from '../utilities/encryption.utility';
 
 const HEADERS = 'authorization';
-export class AuthMiddleware extends BaseMiddleware {
+class AuthMiddleware extends BaseMiddleware {
+    id;
+    constructor() {
+        super();
+        this.id = Math.random();
+    }
+
     async use(req: IRequest, res: Response, next: NextFunction, option?: any): Promise<void> {
         try {
             if (!req.headers[HEADERS]) {
@@ -21,7 +27,7 @@ export class AuthMiddleware extends BaseMiddleware {
             const bearerHeader = req.headers[HEADERS].toString();
             const bearerToken = bearerHeader.split(' ')[1];
 
-            const tokenVerified = await Encryption.verifyToken(bearerToken);
+            const tokenVerified = await verifyToken(bearerToken);
 
             req.tokenInfo = tokenVerified;
 
@@ -41,7 +47,9 @@ export class AuthMiddleware extends BaseMiddleware {
 
             next();
         } catch (error: any) {
-            throw error;
+            next(error);
         }
     }
 }
+
+export const authMiddleware = new AuthMiddleware();

@@ -1,4 +1,4 @@
-import { User } from '@/modules/user/user.entity';
+import { User } from '@/modules/user/user.model';
 import { config } from 'dotenv';
 import { CamelCasePlugin, Kysely, MysqlDialect } from 'kysely';
 import { createPool } from 'mysql2';

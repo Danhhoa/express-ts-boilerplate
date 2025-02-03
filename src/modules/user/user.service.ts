@@ -1,10 +1,10 @@
 import { v4 as uuidV4 } from 'uuid';
-import { User } from './user.entity';
+import { User } from './user.model';
 import userRepository from './user.repository';
 
 class UserService {
-    async getAllUsers() {
-        const users = await userRepository.findAll();
+    async getAllUsers(filters: any) {
+        const users = await userRepository.findAll(filters);
 
         return users;
     }
@@ -34,7 +34,7 @@ class UserService {
     }
 
     async deleteUser(id: string) {
-        return userRepository.delete(id);
+        return userRepository.softDelete(id);
     }
 }
 

@@ -1,13 +1,13 @@
 import { BaseController } from '@/shared/base/base.controller';
 import userService from './user.service';
-import { User } from './user.entity';
+import { User } from './user.model';
 
 class UserController extends BaseController<typeof userService> {
     constructor() {
         super(userService);
     }
-    async getAllUsers() {
-        return this.service.getAllUsers();
+    async getAllUsers(filters: any) {
+        return this.service.getAllUsers(filters);
     }
 
     async getUserByEmail(email: string) {
@@ -24,6 +24,10 @@ class UserController extends BaseController<typeof userService> {
 
     async updateUser(id: string, data: Partial<User>) {
         return this.service.updateUser(id, data);
+    }
+
+    async deleteUser(id: string) {
+        return this.service.deleteUser(id);
     }
 }
 

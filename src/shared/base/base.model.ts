@@ -1,4 +1,4 @@
-export class BaseEntity {
+export class BaseModel {
     createdAt: Date;
 
     updatedAt: Date;

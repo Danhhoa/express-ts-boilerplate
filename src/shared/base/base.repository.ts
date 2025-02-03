@@ -1,9 +1,12 @@
 import { DB, db } from '@/db/kysely';
+import dayjs from 'dayjs';
 import { DeleteResult } from 'kysely';
-import { IBaseRepository } from './interfaces/base-repository.interface';
+import { IBaseRepository, SoftDeleteResult } from './interfaces/base-repository.interface';
 
 interface IBaseOption<T> {
-    fields: Array<keyof T>;
+    fields: Array<keyof T> & '*';
+    limit: number;
+    offset: number;
 }
 
 export class BaseRepository<T> implements IBaseRepository<T> {
@@ -11,8 +14,18 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     constructor(tableName: keyof DB) {
         this.tableName = tableName;
     }
+    // TODO: improve for M-N, M-M, N-M
+    // TODO: improve for where clause?
     async findAll(options?: Partial<IBaseOption<T>>): Promise<T[]> {
-        const qb = db.selectFrom(this.tableName).selectAll();
+        const selectFields = options?.fields?.length > 0 && !options?.fields?.includes('*');
+
+        const qb = db
+            .selectFrom(this.tableName)
+            .selectAll()
+            .$if(!selectFields, (qb: any) => qb.clearSelect().selectAll())
+            .$if(selectFields, (qb: any) => qb.clearSelect().select(options.fields as any))
+            // .where('deletedAt', 'is not', null)
+            .$if(options?.limit && options?.offset >= 0, (qb) => qb.limit(options.limit).offset(options.offset));
 
         const results = await qb.execute();
 
@@ -84,8 +97,22 @@ export class BaseRepository<T> implements IBaseRepository<T> {
         return this.findById(id);
     }
 
+    async softDelete(id: string | Array<string>): Promise<SoftDeleteResult> {
+        const results = await db
+            .updateTable(this.tableName)
+            .set('deletedAt', dayjs().toDate())
+            .where('id', Array.isArray(id) ? 'in' : '=', id)
+            .where('deletedAt', 'is', null)
+            .executeTakeFirst();
+
+        return { affected: Number(results.numChangedRows) };
+    }
+
     async delete(id: string | Array<string>): Promise<DeleteResult> {
-        const results = await db.deleteFrom(this.tableName).where('id', 'in', id).executeTakeFirst();
+        const results = await db
+            .deleteFrom(this.tableName)
+            .where('id', Array.isArray(id) ? 'in' : '=', id)
+            .executeTakeFirst();
 
         return results;
     }

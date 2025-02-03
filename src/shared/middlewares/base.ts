@@ -5,9 +5,10 @@ import IRequest from '../interfaces/request.interface';
 export class BaseMiddleware {
     onError(res: Response, error?: HTTPError) {
         const err = error.tupleErrorParams;
-        res.status(err.status || err.code).json({
-            code: err.code,
-            message: err.message,
+        const statusCode = err?.status || err?.code || 500;
+        return res.status(statusCode).json({
+            code: statusCode,
+            message: err?.message || 'UNKNOWN ERROR',
             messageCode: err?.messageCode || null,
         });
     }
@@ -16,10 +17,10 @@ export class BaseMiddleware {
             this.use
                 .bind(this)(req, res, next, option)
                 .catch((error: any) => {
-                    this.onError(res, error);
+                    return this.onError(res, error);
                 });
     }
-    use(req: IRequest, res: Response, next: NextFunction, option?: any) {
+    use(req: IRequest, res: Response, next: NextFunction, option?: any): any {
         next();
     }
 }

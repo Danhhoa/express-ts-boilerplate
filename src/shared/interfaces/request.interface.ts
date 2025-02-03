@@ -1,4 +1,4 @@
-import { User } from '@/modules/user/user.entity';
+import { User } from '@/modules/user/user.model';
 import { Request } from 'express';
 
 export default interface IRequest extends Request {
