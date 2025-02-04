@@ -26,6 +26,10 @@ class QueryMiddleware extends BaseMiddleware {
         if (req.query?.fields) {
             let fields = req.query.fields;
 
+            if (!Array.isArray(fields)) {
+                fields = req.query.fields.split(',');
+            }
+
             // if include * => remove all others
             if (fields.includes('*')) {
                 fields = ['*'];
