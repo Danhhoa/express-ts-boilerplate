@@ -5,7 +5,7 @@ import { HTTPError } from '@/shared/errors/http.error';
 import s3Service from '@/shared/services/minio/s3/s3.service';
 
 import { TMP_IMAGE_FOLDER_PATH } from '@/shared/constants';
-import { readFileSync } from 'fs';
+import { readFileSync, unlink } from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import { IUploadImage, IUploadResponse } from './interfaces/file.interface';
 
@@ -38,9 +38,9 @@ class FileService {
                 messageCode: MessageErrorCode.UPLOAD_IMAGE_ERROR,
             });
         } finally {
-            // unlink(tmpFilePath, (err) => {
-            //     console.log(`===> unlinks 🥕  => ${path} => result:`, err);
-            // });
+            unlink(tmpFilePath, (err) => {
+                console.log(`===> unlinks 🥕  => ${path} => result:`, err);
+            });
         }
     }
 }

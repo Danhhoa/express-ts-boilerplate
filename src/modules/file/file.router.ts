@@ -38,8 +38,6 @@ class FileRouter extends BaseRouter {
     }
 
     async uploadImage(req: IRequest, res: Response) {
-        console.log(req?.file);
-
         if (!req?.file) {
             throw new HTTPError({
                 code: StatusCodes.UNPROCESSABLE_ENTITY,
