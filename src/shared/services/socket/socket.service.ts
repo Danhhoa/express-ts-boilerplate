@@ -1,5 +1,5 @@
-import config from '@/configs/env.config';
-import logger from '@/configs/logger.config';
+import config from '@/shared/configs/env.config';
+import logger from '@/shared/configs/logger.config';
 import { IConnection, IRoom } from '@/shared/services/socket/interfaces/socket.interface';
 import * as express from 'express';
 import * as http from 'http';

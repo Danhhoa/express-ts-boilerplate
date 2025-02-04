@@ -1,5 +1,5 @@
-import config from '@/configs/env.config';
-import logger from '@/configs/logger.config';
+import config from '@/shared/configs/env.config';
+import logger from '@/shared/configs/logger.config';
 import { MessageErrorCode } from '@/shared/enums';
 import { HTTPError } from '@/shared/errors/http.error';
 import s3Service from '@/shared/services/minio/s3/s3.service';

@@ -4,7 +4,7 @@ import morgan from 'morgan';
 
 import globalErrorHandler from '@/shared/middlewares/global-error-handler.middleware';
 import helmet from 'helmet';
-import router from '../routes';
+import router from '../../routes';
 
 const app = express();
 

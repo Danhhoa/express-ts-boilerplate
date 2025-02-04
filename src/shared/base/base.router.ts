@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import logger from '@/configs/logger.config';
+import logger from '@/shared/configs/logger.config';
 import { HTTPError } from '@/shared/errors/http.error';
 import { IBaseError } from '@/shared/interfaces/error.interface';
 import { StatusCodes } from 'http-status-codes';

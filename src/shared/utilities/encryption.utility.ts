@@ -1,4 +1,4 @@
-import envConfig from '@/configs/env.config';
+import envConfig from '@/shared/configs/env.config';
 import { HTTPError } from '@/shared/errors/http.error';
 import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
