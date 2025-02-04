@@ -30,7 +30,7 @@ export class BaseRouter {
         return res.status(500).json({
             success: false,
             error: {
-                message: error?.message || 'UNEXPECTED',
+                message: 'An unexpected error occured',
             },
         });
     }

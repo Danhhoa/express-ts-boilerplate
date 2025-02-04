@@ -3,7 +3,8 @@ import { HTTPError } from '@/shared/errors/http.error';
 import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
-import { MessageErrorCode } from '../enums';
+import { MessageErrorCode, USER_ROLE } from '../enums';
+import dayjs, { Dayjs } from 'dayjs';
 
 interface IJwtDecoded {
     id: string;
@@ -11,6 +12,16 @@ interface IJwtDecoded {
     role: any;
     iat: number;
     exp: number;
+}
+
+enum TOKEN_TYPE {
+    ACCESS_TOKEN = 'ACCESS_TOKEN',
+    REFRESH_TOKEN = 'REFRESH_TOKEN',
+}
+
+interface IGenerateTokenOption {
+    exp?: Dayjs;
+    secret?: string;
 }
 
 const generateHash = (password: string, saltRounds: number = 10): Promise<string> => {
@@ -27,8 +38,6 @@ const generateHash = (password: string, saltRounds: number = 10): Promise<string
 const verifyHash = (password: string, hash: string): Promise<boolean> => {
     return bcrypt.compare(password, hash);
 };
-
-const generateToken = (key: string, value: string) => {};
 
 const verifyToken = (token: string) => {
     const secret = envConfig.app.tokenSecret;
@@ -67,4 +76,28 @@ const verifyToken = (token: string) => {
     }
 };
 
-export { generateHash, generateToken, verifyHash, verifyToken };
+const generateAccessToken = async (
+    payload: Object,
+    option: IGenerateTokenOption = {
+        exp: dayjs().add(8, 'hours'),
+    },
+) => {
+    const secret = option.secret || envConfig.app.tokenSecret;
+    return jwt.sign({ ...payload, type: 'ACCESS_TOKEN' }, secret, {
+        expiresIn: Math.floor(option.exp.diff(dayjs(), 'seconds')),
+    });
+};
+
+const generateRefreshToken = async (
+    payload: Object,
+    option: IGenerateTokenOption = {
+        exp: dayjs().add(1, 'week'),
+    },
+) => {
+    const secret = option.secret || envConfig.app.tokenSecret;
+
+    return jwt.sign({ ...payload, type: 'REFRESH_TOKEN' }, secret, {
+        expiresIn: Math.floor(option.exp.diff(dayjs(), 'seconds')),
+    });
+};
+export { generateHash, generateAccessToken, verifyHash, verifyToken, generateRefreshToken };

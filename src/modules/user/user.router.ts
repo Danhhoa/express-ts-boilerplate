@@ -23,18 +23,9 @@ class UserRouter extends BaseRouter {
         );
         this.router.post('/', this.route(this.createUser));
         this.router.post('/bulk-create', this.route(this.bulkCreateUser));
-        this.router.post('/login', this.route(this.login));
         this.router.post('/seed', this.route(this.seed));
         this.router.put('/:id', this.route(this.updateUser));
         this.router.delete('/:id', this.route(this.deleteUser));
-    }
-
-    async login(req: IRequest, res: Response) {
-        const body = req.body;
-
-        await loginSchema.validateAsync(body);
-
-        return this.onSuccess(res, true);
     }
 
     async allUsers(req: IRequest, res: Response) {
