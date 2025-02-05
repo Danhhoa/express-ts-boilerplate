@@ -3,8 +3,8 @@ import { User } from './user.model';
 import userRepository from './user.repository';
 
 class UserService {
-    async getAllUsers(filters: any) {
-        const users = await userRepository.findAll(filters);
+    async getAllUsers(filters: unknown) {
+        const users = await userRepository.findAndCountAll(filters);
 
         return users;
     }
@@ -20,9 +20,14 @@ class UserService {
         return await userRepository.insert({ id, ...data });
     }
 
+    async upsertUser(data: Partial<User>) {
+        const id = uuidV4();
+        return await userRepository.upsert({ id, ...data });
+    }
+
     async bulkCreateUser(data: Partial<User[]>) {
         const payload = data.map((user) => ({ id: uuidV4(), ...user }));
-        const users = await userRepository.bulkInsert(payload);
+        const users = await userRepository.bulkInsert(data);
 
         return users;
     }

@@ -6,7 +6,7 @@ class UserController extends BaseController<typeof userService> {
     constructor() {
         super(userService);
     }
-    async getAllUsers(filters: any) {
+    async getAllUsers(filters: unknown) {
         return this.service.getAllUsers(filters);
     }
 
@@ -16,6 +16,10 @@ class UserController extends BaseController<typeof userService> {
 
     async createUser(data: Partial<User>) {
         return this.service.createUser(data);
+    }
+
+    async upsertUser(data: Partial<User>) {
+        return this.service.upsertUser(data);
     }
 
     async bulkCreateUser(data: Partial<User[]>) {

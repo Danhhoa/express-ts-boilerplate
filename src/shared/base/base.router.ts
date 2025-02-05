@@ -40,12 +40,20 @@ export class BaseRouter {
     };
 
     onSuccessAsList(res: Response, data: any = [], pagination?: IPaginationReq) {
+        if (!pagination) {
+            return res.json({
+                success: true,
+                code: StatusCodes.OK,
+                data,
+            });
+        }
+
         const total = data.count > 0 ? data.count : 0;
         const page = _.floor(pagination.offset / pagination.limit) + 1;
 
         return res.json({
             success: true,
-            code: 200,
+            code: StatusCodes.OK,
             data,
             pagination: {
                 total: total,

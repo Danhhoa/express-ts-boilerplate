@@ -1,5 +1,5 @@
-import { loginSchema } from '@/modules/auth/validations/auth.schema';
 import { BaseRouter } from '@/shared/base/base.router';
+import { IPaginationReq } from '@/shared/interfaces/common.interface';
 import IRequest from '@/shared/interfaces/request.interface';
 import { queryMiddleware } from '@/shared/middlewares/crud.middleware';
 import { Response, Router } from 'express';
@@ -22,6 +22,7 @@ class UserRouter extends BaseRouter {
             this.route(this.allUsers),
         );
         this.router.post('/', this.route(this.createUser));
+        this.router.post('/upsert', this.route(this.upsertUser));
         this.router.post('/bulk-create', this.route(this.bulkCreateUser));
         this.router.post('/seed', this.route(this.seed));
         this.router.put('/:id', this.route(this.updateUser));
@@ -38,7 +39,7 @@ class UserRouter extends BaseRouter {
         return this.onSuccessAsList(res, result, {
             offset: page,
             limit,
-        } as any);
+        } as unknown as IPaginationReq);
     }
 
     async getUserByEmail(req: IRequest, res: Response) {
@@ -50,6 +51,13 @@ class UserRouter extends BaseRouter {
     async createUser(req: IRequest, res: Response) {
         const data = req.body;
         const result = await userController.createUser(data);
+
+        return this.onSuccess(res, result);
+    }
+
+    async upsertUser(req: IRequest, res: Response) {
+        const data = req.body;
+        const result = await userController.upsertUser(data);
 
         return this.onSuccess(res, result);
     }
