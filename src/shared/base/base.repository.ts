@@ -68,8 +68,6 @@ export class BaseRepository<T> implements IBaseRepository<T> {
             newItemId = insertResults.insertId;
         }
 
-        console.log({ newItemId });
-
         return db.selectFrom(this.tableName).selectAll().where('id', '=', newItemId).executeTakeFirst() as T;
     }
 

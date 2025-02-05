@@ -10,7 +10,7 @@ export interface IFindAndCount<T> {
 }
 
 export interface IFindOptions<T> {
-    fields: Array<keyof T> & '*';
+    fields: Array<keyof T | '*'>;
     limit: number;
     offset: number;
     withDeleted: boolean;
