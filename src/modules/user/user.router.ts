@@ -1,4 +1,5 @@
-import { BaseRouter } from '@/shared/base/base.router';
+import { CrudRouter } from '@/shared/base/crud.router';
+import { USER_ROLE } from '@/shared/enums';
 import { IPaginationReq } from '@/shared/interfaces/common.interface';
 import IRequest from '@/shared/interfaces/request.interface';
 import { queryMiddleware } from '@/shared/middlewares/crud.middleware';
@@ -8,17 +9,16 @@ import userController from './user.controller';
 import { User } from './user.model';
 import userService from './user.service';
 
-class UserRouter extends BaseRouter {
+class UserRouter extends CrudRouter<typeof userController> {
     router: Router;
     constructor() {
-        super();
+        super(userController);
         this.router = Router();
         this.router.get(
             '/',
-            // authMiddleware.run(),
-            // new RoleMiddleware([USER_ROLE.ADMIN]).run(),
+            this.ensureAuth(),
+            this.allowRoles([USER_ROLE.ADMIN]),
             queryMiddleware.run(),
-
             this.route(this.allUsers),
         );
         this.router.post('/', this.route(this.createUser));
@@ -34,7 +34,7 @@ class UserRouter extends BaseRouter {
 
         await getListUserSchema.validateAsync(req.query);
 
-        const result = await userController.getAllUsers(req.query);
+        const result = await this.controller.getAllUsers(req.query);
 
         return this.onSuccessAsList(res, result, {
             offset: page,
@@ -43,28 +43,28 @@ class UserRouter extends BaseRouter {
     }
 
     async getUserByEmail(req: IRequest, res: Response) {
-        const result = await userController.getUserByEmail(req.body.email);
+        const result = await this.controller.getUserByEmail(req.body.email);
 
         return this.onSuccess(res, result);
     }
 
     async createUser(req: IRequest, res: Response) {
         const data = req.body;
-        const result = await userController.createUser(data);
+        const result = await this.controller.createUser(data);
 
         return this.onSuccess(res, result);
     }
 
     async upsertUser(req: IRequest, res: Response) {
         const data = req.body;
-        const result = await userController.upsertUser(data);
+        const result = await this.controller.upsertUser(data);
 
         return this.onSuccess(res, result);
     }
 
     async bulkCreateUser(req: IRequest, res: Response) {
         const data = req.body;
-        const result = await userController.bulkCreateUser(data);
+        const result = await this.controller.bulkCreateUser(data);
 
         return this.onSuccess(res, result);
     }
@@ -72,14 +72,14 @@ class UserRouter extends BaseRouter {
     async updateUser(req: IRequest, res: Response) {
         const data = req.body;
         const { id } = req.params;
-        const result = await userController.updateUser(id, data);
+        const result = await this.controller.updateUser(id, data);
 
         return this.onSuccess(res, result);
     }
 
     async deleteUser(req: IRequest, res: Response) {
         const { id } = req.params;
-        const result = await userController.deleteUser(id);
+        const result = await this.controller.deleteUser(id);
 
         return this.onSuccess(res, result);
     }

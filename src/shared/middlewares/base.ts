@@ -7,18 +7,22 @@ export class BaseMiddleware {
         const err = error.tupleErrorParams;
         const statusCode = err?.status || err?.code || 500;
         return res.status(statusCode).json({
-            code: statusCode,
-            message: err?.message || 'UNKNOWN ERROR',
-            messageCode: err?.messageCode || null,
+            success: false,
+            error: {
+                code: statusCode,
+                message: err?.message || 'UNKNOWN ERROR',
+                messageCode: err?.messageCode || null,
+            },
         });
     }
     run(option?: any) {
-        return (req: IRequest, res: Response, next: NextFunction) =>
-            this.use
-                .bind(this)(req, res, next, option)
-                .catch((error: any) => {
-                    return this.onError(res, error);
-                });
+        return (req: IRequest, res: Response, next: NextFunction) => {
+            try {
+                return this.use.bind(this)(req, res, next, option);
+            } catch (error) {
+                return this.onError(res, error);
+            }
+        };
     }
     use(req: IRequest, res: Response, next: NextFunction, option?: any): any {
         next();
