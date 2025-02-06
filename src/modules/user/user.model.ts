@@ -53,4 +53,10 @@ export class User extends BaseModel {
 
         return user;
     }
+
+    static getPublicFields(): Array<keyof User> {
+        const excludeFields = ['password'];
+
+        return Object.keys(this.sampleUser()).filter((key) => !excludeFields.includes(key)) as Array<keyof User>;
+    }
 }
