@@ -26,7 +26,7 @@ export class User extends BaseModel {
         updatedAt: Date,
         deletedAt: Date,
     ) {
-        super(); // Call the constructor of the BaseModel if it has one
+        super();
         this.id = id;
         this.email = email;
         this.password = password;

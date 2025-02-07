@@ -1,3 +1,4 @@
+import { AuthToken } from '@/modules/auth/auth-token.model';
 import { User } from '@/modules/user/user.model';
 import { config } from 'dotenv';
 import { CamelCasePlugin, Kysely, MysqlDialect } from 'kysely';
@@ -7,6 +8,7 @@ config();
 
 export interface DB {
     user: User;
+    authTokens: AuthToken;
 }
 
 const dialect = new MysqlDialect({

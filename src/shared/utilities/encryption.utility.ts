@@ -77,9 +77,9 @@ const verifyToken = (token: string) => {
 };
 
 const generateAccessToken = async (
-    payload: Object,
+    payload: object,
     option: IGenerateTokenOption = {
-        exp: dayjs().add(8, 'hours'),
+        exp: dayjs().add(30, 'minutes'),
     },
 ) => {
     const secret = option.secret || envConfig.app.tokenSecret;

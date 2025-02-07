@@ -1,13 +1,21 @@
 import { BaseController } from '@/shared/base/base.controller';
 import authService from './auth.service';
-import { IAuthLogin } from './interfaces/auth.interface';
+import { IAuthLogin, IAuthLogout, IRefreshToken } from './interfaces/auth.interface';
 
 class AuthController extends BaseController<typeof authService> {
     constructor() {
         super(authService);
     }
-    async login(data: IAuthLogin) {
-        return this.service.login(data);
+    async login(payload: IAuthLogin) {
+        return this.service.login(payload);
+    }
+
+    async logout(payload: IAuthLogout) {
+        return this.service.logout(payload);
+    }
+
+    async refreshToken(payload: IRefreshToken) {
+        return this.service.refreshToken(payload);
     }
 }
 

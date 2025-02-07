@@ -10,7 +10,9 @@ class AuthRouter extends BaseRouter {
         super();
         this.router = Router();
 
+        this.router.get('/refresh-token', this.route(this.refreshToken));
         this.router.post('/login', this.route(this.login));
+        this.router.post('/logout', this.route(this.logout));
     }
 
     async login(req: IRequest, res: Response) {
@@ -19,6 +21,22 @@ class AuthRouter extends BaseRouter {
         await loginSchema.validateAsync(body);
 
         const results = await authController.login(body);
+
+        return this.onSuccess(res, results);
+    }
+
+    async logout(req: IRequest, res: Response) {
+        const body = req.body;
+
+        const results = await authController.logout({ refreshToken: body.refreshToken });
+
+        return this.onSuccess(res, results);
+    }
+
+    async refreshToken(req: IRequest, res: Response) {
+        const body = req.body;
+
+        const results = await authController.refreshToken(body);
 
         return this.onSuccess(res, results);
     }

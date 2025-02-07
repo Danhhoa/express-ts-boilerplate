@@ -1,11 +1,12 @@
 import { DB, db } from '@/db/kysely';
 import dayjs from 'dayjs';
 import { DeleteResult, sql } from 'kysely';
+import { InsertExpression } from 'kysely/dist/cjs/parser/insert-values-parser';
 import { IBaseRepository, IFindAndCount, IFindOptions, SoftDeleteResult } from './interfaces/base-repository.interface';
 
-export class BaseRepository<T> implements IBaseRepository<T> {
-    protected tableName: keyof DB;
-    constructor(tableName: keyof DB) {
+export class BaseRepository<T, DBKey extends keyof DB> implements IBaseRepository<T> {
+    protected tableName: DBKey;
+    constructor(tableName: DBKey) {
         this.tableName = tableName;
     }
     // TODO: improve for M-N, M-M, N-M
@@ -50,18 +51,21 @@ export class BaseRepository<T> implements IBaseRepository<T> {
         return { count: total.count, rows } as IFindAndCount<T>;
     }
 
-    async findById(id: string): Promise<T> {
-        const [results] = await db.selectFrom(this.tableName).selectAll().where('id', '=', id).execute();
+    async findById(id: string | number): Promise<T> {
+        const [results] = await db
+            .selectFrom(this.tableName)
+            .selectAll()
+            .where('id', '=', id as any)
+            .execute();
 
         return results as T;
     }
 
     async insert(data: Partial<T>): Promise<T> {
         let newItemId = (data as any)?.id;
-        const qb = db.insertInto(this.tableName).values(data);
+        const qb = db.insertInto(this.tableName).values(data as any);
 
         const insertResults = await qb.executeTakeFirst();
-        console.log('🚀 ~ BaseRepository<T> ~ insert ~ insertResults:', insertResults);
 
         // [MYSQL] insertId will return if use auto increment ID
         if (insertResults.insertId) {
@@ -73,14 +77,14 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
     async bulkInsert(data: Partial<T[]>): Promise<T[]> {
         let newItemIds = data.map((item) => (item as any).id);
-        const qb = db.insertInto(this.tableName).values(data);
+        const qb = db.insertInto(this.tableName).values(data as any);
 
         const insertResults = await qb.executeTakeFirst();
 
         // [MYSQL] insertId will return if use auto increment ID
         if (insertResults.insertId) {
             const firstInsertId = Number(insertResults.insertId);
-            newItemIds = data.map((_: Partial<T>, index: number) => firstInsertId + index);
+            newItemIds = data.map((_: Partial<InsertExpression<DB, DBKey>>, index: number) => firstInsertId + index);
         }
 
         const results = await db.selectFrom(this.tableName).selectAll().where('id', 'in', newItemIds).execute();
@@ -92,7 +96,10 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     async upsert(data: Partial<T>): Promise<T> {
         let newItemId = (data as any)?.id;
 
-        const qb = db.insertInto(this.tableName).values(data).onDuplicateKeyUpdate(data);
+        const qb = db
+            .insertInto(this.tableName)
+            .values(data as any)
+            .onDuplicateKeyUpdate(data as any);
 
         const upsertResults = await qb.executeTakeFirst();
 
@@ -114,13 +121,13 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
         const qb = db
             .insertInto(this.tableName)
-            .values(data)
+            .values(data as any)
             .onDuplicateKeyUpdate((eb) => {
                 const keys = Object.keys(data[0]).filter((key) => key !== 'id');
                 const tmp = Object.fromEntries(keys.map((key) => [key, sql`values(${eb.ref(key as any)})`]));
                 console.log('🚀 ~ BaseRepository<T> ~ qb ~ tmp:', tmp);
 
-                return tmp;
+                return tmp as any;
             });
 
         const upsertResults = await qb.execute();
@@ -134,17 +141,21 @@ export class BaseRepository<T> implements IBaseRepository<T> {
         return db.selectFrom(this.tableName).selectAll().where('id', 'in', newItemIds).execute() as unknown as T[];
     }
 
-    async update(id: string, data: Partial<T>): Promise<T> {
-        await db.updateTable(this.tableName).set(data).where('id', '=', id).execute();
+    async update(id: string | number, data: Partial<T>): Promise<T> {
+        await db
+            .updateTable(this.tableName)
+            .set(data as any)
+            .where('id', '=', id as any)
+            .execute();
 
-        return this.findById(id);
+        return this.findById(id as any);
     }
 
     async softDelete(id: string | Array<string>): Promise<SoftDeleteResult> {
         const results = await db
             .updateTable(this.tableName)
-            .set('deletedAt', dayjs().toDate())
-            .where('id', Array.isArray(id) ? 'in' : '=', id)
+            .set('deletedAt', dayjs().toDate() as any)
+            .where('id', Array.isArray(id) ? 'in' : '=', id as any)
             .where('deletedAt', 'is', null)
             .executeTakeFirst();
 
@@ -154,7 +165,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     async delete(id: string | Array<string>): Promise<DeleteResult> {
         const results = await db
             .deleteFrom(this.tableName)
-            .where('id', Array.isArray(id) ? 'in' : '=', id)
+            .where('id', Array.isArray(id) ? 'in' : '=', id as any)
             .executeTakeFirst();
 
         return results;

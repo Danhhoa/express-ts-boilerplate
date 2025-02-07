@@ -4,7 +4,7 @@ import { BaseRepository } from '@/shared/base/base.repository';
 import { IFindAndCount, IFindOptions } from '@/shared/base/interfaces';
 import { sql } from 'kysely';
 
-class UserRepository extends BaseRepository<User> {
+class UserRepository extends BaseRepository<User, 'user'> {
     constructor() {
         super('user');
     }
